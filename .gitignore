@@ -35,3 +35,7 @@ phx_demo-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Ignore all environment files (except templates).
+/.env
+/.env*.local
+!/.env*.erb
