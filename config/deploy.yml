@@ -30,7 +30,7 @@ accessories:
 builder:
   multiarch: false
 healthcheck:
-  path: /
+  path: /up
   port: 4000
 traefik:
   args:
