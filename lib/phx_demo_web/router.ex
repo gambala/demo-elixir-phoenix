@@ -17,6 +17,7 @@ defmodule PhxDemoWeb.Router do
   scope "/", PhxDemoWeb do
     pipe_through :browser
 
+    resources "/links", LinkController
     get "/", PageController, :home
   end
 

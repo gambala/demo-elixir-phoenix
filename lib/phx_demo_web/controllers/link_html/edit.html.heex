@@ -1,0 +1,8 @@
+<.header>
+  Edit Link <%= @link.id %>
+  <:subtitle>Use this form to manage link records in your database.</:subtitle>
+</.header>
+
+<.link_form changeset={@changeset} action={~p"/links/#{@link}"} />
+
+<.back navigate={~p"/links"}>Back to links</.back>
