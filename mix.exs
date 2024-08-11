@@ -3,7 +3,7 @@ defmodule PhxDemo.MixProject do
 
   def project do
     [
-      app: :phx_demo,
+      app: :demo_project,
       version: "0.1.0",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -75,10 +75,10 @@ defmodule PhxDemo.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind phx_demo", "esbuild phx_demo"],
+      "assets.build": ["tailwind demo_project", "esbuild demo_project"],
       "assets.deploy": [
-        "tailwind phx_demo --minify",
-        "esbuild phx_demo --minify",
+        "tailwind demo_project --minify",
+        "esbuild demo_project --minify",
         "phx.digest"
       ]
     ]

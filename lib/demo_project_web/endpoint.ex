@@ -1,12 +1,12 @@
 defmodule PhxDemoWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :phx_demo
+  use Phoenix.Endpoint, otp_app: :demo_project
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
-    key: "_phx_demo_key",
+    key: "_demo_project_key",
     signing_salt: "n4PZIN+S",
     same_site: "Lax"
   ]
@@ -21,7 +21,7 @@ defmodule PhxDemoWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :phx_demo,
+    from: :demo_project,
     gzip: false,
     only: PhxDemoWeb.static_paths()
 
@@ -31,7 +31,7 @@ defmodule PhxDemoWeb.Endpoint do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
     plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
-    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :phx_demo
+    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :demo_project
   end
 
   plug Phoenix.LiveDashboard.RequestLogger,

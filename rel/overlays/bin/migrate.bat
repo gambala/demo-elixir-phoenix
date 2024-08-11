@@ -1,1 +1,1 @@
-call "%~dp0\phx_demo" eval PhxDemo.Release.migrate
+call "%~dp0\demo_project" eval PhxDemo.Release.migrate

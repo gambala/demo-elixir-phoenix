@@ -2,4 +2,4 @@
 set -eu
 
 cd -P -- "$(dirname -- "$0")"
-exec ./phx_demo eval PhxDemo.Release.migrate
+exec ./demo_project eval PhxDemo.Release.migrate

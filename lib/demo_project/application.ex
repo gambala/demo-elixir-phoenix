@@ -10,7 +10,7 @@ defmodule PhxDemo.Application do
     children = [
       PhxDemoWeb.Telemetry,
       PhxDemo.Repo,
-      {DNSCluster, query: Application.get_env(:phx_demo, :dns_cluster_query) || :ignore},
+      {DNSCluster, query: Application.get_env(:demo_project, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: PhxDemo.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: PhxDemo.Finch},

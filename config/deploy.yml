@@ -1,9 +1,9 @@
-service: phx-demo
-image: gambala/phx_demo
+service: demo-elixir-phoenix
+image: gambala/demo_project
 servers:
   - <%= ENV["MAIN_SERVER_IP"] %>
 labels:
-  traefik.http.routers.phx-demo-web.rule: Host(`phx.gambala.pro`)
+  traefik.http.routers.demo-elixir-phoenix-web.rule: Host(`phoenix.gambala.pro`)
 registry:
   server: ghcr.io
   username: gambala

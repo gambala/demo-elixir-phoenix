@@ -23,7 +23,7 @@ erl_crash.dump
 /tmp/
 
 # Ignore package tarball (built via "mix hex.build").
-phx_demo-*.tar
+demo_project-*.tar
 
 # Ignore assets that are produced by build tools.
 /priv/static/assets/

@@ -1,11 +1,11 @@
 import Config
 
 # Configure your database
-config :phx_demo, PhxDemo.Repo,
+config :demo_project, PhxDemo.Repo,
   username: "gambala",
   password: "",
   hostname: "localhost",
-  database: "phx_demo_dev",
+  database: "demo_project_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -16,7 +16,7 @@ config :phx_demo, PhxDemo.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
-config :phx_demo, PhxDemoWeb.Endpoint,
+config :demo_project, PhxDemoWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {127, 0, 0, 1}, port: 4000],
@@ -25,8 +25,8 @@ config :phx_demo, PhxDemoWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "bDhLG3rEAoP3PGb6YeCEMgckr4HWGgZq7k8AJJuXTb6Nh1+6baHZJHbNqXgzPYuW",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:phx_demo, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:phx_demo, ~w(--watch)]}
+    esbuild: {Esbuild, :install_and_run, [:demo_project, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:demo_project, ~w(--watch)]}
   ]
 
 # ## SSL Support
@@ -53,17 +53,17 @@ config :phx_demo, PhxDemoWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :phx_demo, PhxDemoWeb.Endpoint,
+config :demo_project, PhxDemoWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/phx_demo_web/(controllers|live|components)/.*(ex|heex)$"
+      ~r"lib/demo_project_web/(controllers|live|components)/.*(ex|heex)$"
     ]
   ]
 
 # Enable dev routes for dashboard and mailbox
-config :phx_demo, dev_routes: true
+config :demo_project, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"

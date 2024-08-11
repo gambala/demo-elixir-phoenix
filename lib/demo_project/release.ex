@@ -3,7 +3,7 @@ defmodule PhxDemo.Release do
   Used for executing DB release tasks when run in production without Mix
   installed.
   """
-  @app :phx_demo
+  @app :demo_project
 
   def migrate do
     load_app()
