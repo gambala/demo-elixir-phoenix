@@ -1,9 +1,16 @@
+<% require "dotenv"; Dotenv.load(".env") %>
+
 service: demo-elixir-phoenix
 image: gambala/demo_project
 servers:
   - <%= ENV["MAIN_SERVER_IP"] %>
-labels:
-  traefik.http.routers.demo-elixir-phoenix-web.rule: Host(`phoenix.gambala.pro`)
+proxy:
+  ssl: false
+  host: phoenix.gambala.pro
+  app_port: 4000
+  healthcheck:
+    interval: 10
+    path: /up
 registry:
   server: ghcr.io
   username: gambala
@@ -27,15 +34,4 @@ accessories:
     directories:
       - data:/var/lib/postgresql/data
 builder:
-  multiarch: false
-healthcheck:
-  interval: 10s
-  path: /up
-  port: 4000
-traefik:
-  args:
-    api.dashboard: true
-  labels:
-    traefik.enable: true
-    traefik.http.routers.dashboard.rule: Host(`traefik.gambala.pro`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
-    traefik.http.routers.dashboard.service: api@internal
+  arch: arm64
