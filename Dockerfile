@@ -17,84 +17,79 @@ ARG DEBIAN_VERSION="bullseye-20240722-slim"
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 
-
-
 FROM ${BUILDER_IMAGE} as builder
+  WORKDIR /app
 
-WORKDIR /app
+  # install build dependencies
+  RUN apt-get update -y -qq && \
+      apt-get install --no-install-recommends -y build-essential git && \
+      apt-get clean && \
+      rm -f /var/lib/apt/lists/*_*
 
-# install build dependencies
-RUN apt-get update -y -qq && \
-    apt-get install --no-install-recommends -y build-essential git && \
-    apt-get clean && \
-    rm -f /var/lib/apt/lists/*_*
+  # install hex + rebar
+  RUN mix local.hex --force && \
+      mix local.rebar --force
 
-# install hex + rebar
-RUN mix local.hex --force && \
-    mix local.rebar --force
+  # set build ENV
+  ENV MIX_ENV="prod"
 
-# set build ENV
-ENV MIX_ENV="prod"
+  # install mix dependencies
+  COPY --link mix.exs mix.lock ./
+  RUN mix deps.get --only $MIX_ENV
+  RUN mkdir config
 
-# install mix dependencies
-COPY --link mix.exs mix.lock ./
-RUN mix deps.get --only $MIX_ENV
-RUN mkdir config
+  # copy compile-time config files before we compile dependencies
+  # to ensure any relevant config change will trigger the dependencies
+  # to be re-compiled.
+  COPY --link config/config.exs config/${MIX_ENV}.exs config/
+  RUN mix deps.compile
 
-# copy compile-time config files before we compile dependencies
-# to ensure any relevant config change will trigger the dependencies
-# to be re-compiled.
-COPY --link config/config.exs config/${MIX_ENV}.exs config/
-RUN mix deps.compile
+  COPY --link priv priv
+  COPY --link lib lib
+  COPY --link assets assets
 
-COPY --link priv priv
-COPY --link lib lib
-COPY --link assets assets
+  # compile assets
+  RUN mix assets.deploy
 
-# compile assets
-RUN mix assets.deploy
+  # Compile the release
+  RUN mix compile
 
-# Compile the release
-RUN mix compile
+  # Changes to config/runtime.exs don't require recompiling the code
+  COPY --link config/runtime.exs config/
 
-# Changes to config/runtime.exs don't require recompiling the code
-COPY --link config/runtime.exs config/
-
-COPY --link rel rel
-RUN mix release
-
+  COPY --link rel rel
+  RUN mix release
 
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
 FROM ${RUNNER_IMAGE}
+  RUN apt-get update -y -qq && \
+      apt-get install --no-install-recommends -y libstdc++6 openssl libncurses5 locales ca-certificates && \
+      apt-get clean && \
+      rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-RUN apt-get update -y -qq && \
-    apt-get install --no-install-recommends -y libstdc++6 openssl libncurses5 locales ca-certificates curl && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+  # Set the locale
+  RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
+  ENV LANG en_US.UTF-8
+  ENV LANGUAGE en_US:en
+  ENV LC_ALL en_US.UTF-8
 
-# Set the locale
-RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+  WORKDIR /app
+  RUN chown nobody /app
 
-WORKDIR /app
-RUN chown nobody /app
+  # set runner ENV
+  ENV MIX_ENV="prod"
 
-# set runner ENV
-ENV MIX_ENV="prod"
+  # Only copy the final release from the build stage
+  COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/demo_project ./
 
-# Only copy the final release from the build stage
-COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/demo_project ./
+  USER nobody
 
-USER nobody
+  # If using an environment that doesn't automatically reap zombie processes, it is
+  # advised to add an init process such as tini via `apt-get install`
+  # above and adding an entrypoint. See https://github.com/krallin/tini for details
+  # ENTRYPOINT ["/tini", "--"]
 
-# If using an environment that doesn't automatically reap zombie processes, it is
-# advised to add an init process such as tini via `apt-get install`
-# above and adding an entrypoint. See https://github.com/krallin/tini for details
-# ENTRYPOINT ["/tini", "--"]
-
-EXPOSE 4000
-CMD ["/app/bin/server"]
+  EXPOSE 4000
+  CMD ["/app/bin/server"]
